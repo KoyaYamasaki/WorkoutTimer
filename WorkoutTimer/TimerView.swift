@@ -10,7 +10,7 @@ import AVFoundation
 
 struct TimerView: View {
   @State private var percentage: Int = 0
-  @State private var isExercising = true
+  @State private var isExercising = false
   @State private var readyToStart = "START"
   @State private var setCount: Int = 0
   
@@ -28,7 +28,7 @@ struct TimerView: View {
         }
         Spacer()
         Text("Set count: \(setCount) / \(exerciseSetting!.howManySets)")
-          .font(.system(size: 45))
+          .font(.system(size: 25))
           .fontWeight(.heavy)
           .colorInvert()
         Text(readyToStart)
@@ -69,12 +69,13 @@ struct TimerView: View {
       var count = 3
       timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
 //        timer.invalidate()
+        fireSoundEffect(count: count+1)
         if count == 0 {
-          AudioServicesPlaySystemSound(1001)
           timer.invalidate()
-          initTimer()
+          setCount += 1
+          switchExerciseAndRest()
+          start()
         } else {
-//          AudioServicesPlaySystemSound(1052)
           readyToStart = "\(count)"
           count -= 1
         }
@@ -91,39 +92,50 @@ struct TimerView: View {
     }
     return divideHundred * 0.01
   }
-  
-  func initTimer() {
-    if setCount == exerciseSetting!.howManySets {
-      readyToStart = "Finish!"
-      return
-    }
 
-    percentage = isExercising ? exerciseSetting!.exerciseTime : exerciseSetting!.restTime
-    if !isExercising {
-      readyToStart = "REST"
-    } else {
-      setCount += 1
+  func switchExerciseAndRest() {
+    isExercising.toggle()
+
+    if isExercising {
+      percentage = exerciseSetting!.exerciseTime
       readyToStart = "START"
+    } else {
+      percentage = exerciseSetting!.restTime
+      readyToStart = "REST"
     }
-
-    start()
   }
-  
+
+  func finishExerciseIfNeeded() -> Bool {
+    if !isExercising && setCount == exerciseSetting!.howManySets {
+      percentage = 0
+      readyToStart = "Finish!"
+      return true
+    }
+    return false
+  }
+
   func start() {
     var timer = Timer()
     timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) {
       _ in
+      
+      fireSoundEffect(count: percentage)
+
       if percentage == 1 {
         timer.invalidate()
-        percentage = 0
-        isExercising.toggle()
-        AudioServicesPlaySystemSound(1001)
-        initTimer()
+
+        if finishExerciseIfNeeded() {
+          return
+        }
+
+        switchExerciseAndRest()
+
+        if isExercising {
+          setCount += 1
+        }
+
+        start()
         return
-      }
-      
-      if percentage <= 4 {
-        //          AudioServicesPlaySystemSound(1052)
       }
       
       percentage -= 1
@@ -131,9 +143,9 @@ struct TimerView: View {
   }
   
   func fireSoundEffect(count: Int) {
-    if count != 0 {
+    if count <= 4 && count != 1 {
       AudioServicesPlaySystemSound(1052)
-    } else {
+    } else if count == 1 {
       AudioServicesPlaySystemSound(1001)
     }
   }
