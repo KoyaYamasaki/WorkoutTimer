@@ -14,7 +14,7 @@ struct TimerView: View {
   @State private var readyToStart = "START"
   @State private var setCount: Int = 0
   
-  @Binding var exerciseSetting: ExerciseSetting?
+  let exerciseSetting: ExerciseSetting
 //  @State private var timer = Timer()
 
   var body: some View {
@@ -23,11 +23,8 @@ struct TimerView: View {
         .edgesIgnoringSafeArea(.all)
       
       VStack {
-        Button("Back to Setting View") {
-          exerciseSetting = nil
-        }
         Spacer()
-        Text("Set count: \(setCount) / \(exerciseSetting!.howManySets)")
+        Text("Set count: \(setCount) / \(exerciseSetting.howManySets)")
           .font(.system(size: 25))
           .fontWeight(.heavy)
           .colorInvert()
@@ -86,9 +83,9 @@ struct TimerView: View {
   func multipleValue() -> CGFloat {
     var divideHundred: CGFloat = 0.0
     if isExercising {
-      divideHundred = 100.0 / CGFloat(exerciseSetting!.exerciseTime)
+      divideHundred = 100.0 / CGFloat(exerciseSetting.exerciseTime)
     } else {
-      divideHundred = 100.0 / CGFloat(exerciseSetting!.restTime)
+      divideHundred = 100.0 / CGFloat(exerciseSetting.restTime)
     }
     return divideHundred * 0.01
   }
@@ -97,16 +94,16 @@ struct TimerView: View {
     isExercising.toggle()
 
     if isExercising {
-      percentage = exerciseSetting!.exerciseTime
+      percentage = exerciseSetting.exerciseTime
       readyToStart = "START"
     } else {
-      percentage = exerciseSetting!.restTime
+      percentage = exerciseSetting.restTime
       readyToStart = "REST"
     }
   }
 
   func finishExerciseIfNeeded() -> Bool {
-    if !isExercising && setCount == exerciseSetting!.howManySets {
+    if !isExercising && setCount == exerciseSetting.howManySets {
       percentage = 0
       readyToStart = "Finish!"
       return true
@@ -220,7 +217,6 @@ struct Pulsation: View {
 struct CircularProgressView_Previews: PreviewProvider {
   static var previews: some View {
     let exercise: ExerciseSetting = ExerciseSetting(exerciseTime: 10, restTime: 5, howManySets: 2)
-      TimerView(exerciseSetting: .constant(exercise))
-//    TimerView(exerciseSetting: .constant(nil))
+      TimerView(exerciseSetting: exercise)
   }
 }

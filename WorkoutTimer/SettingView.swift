@@ -14,19 +14,19 @@ struct ExerciseSetting {
 }
 
 struct SettingView: View {
-  @State private var exerciseSetting: ExerciseSetting?
   @State private var exerciseTime: Int = 30
   @State private var restTime: Int = 10
   @State private var howManySets: Int = 5
   
   var body: some View {
-    if exerciseSetting == nil {
-      ZStack {
-        Color.backgroundColor
-          .edgesIgnoringSafeArea(.all)
-        
+    ZStack {
+      Color.backgroundColor
+        .edgesIgnoringSafeArea(.all)
+      
+      NavigationView {
+
         Form {
-          
+
           Section {
             Picker(selection: $exerciseTime, label: labelView(title: "Exercise Time", subtitle: "\(exerciseTime) sec")) {
               ForEach(5...100, id: \.self) { index in
@@ -57,22 +57,30 @@ struct SettingView: View {
             }
             .pickerStyle(MenuPickerStyle())
           }
+
+          NavigationLink(
+            destination:
+              TimerView(
+                exerciseSetting:
+                  ExerciseSetting(
+                    exerciseTime: exerciseTime,
+                    restTime: restTime,
+                    howManySets: howManySets)),
+          label: {
+            Text("START")
+          })
+          .font(.title)
+          .padding()
+          .border(Color.blue, width: 4.0)
+          .cornerRadius(10.0)
+
         }
-        .colorInvert()
-        
-        Button("Start") {
-          exerciseSetting = ExerciseSetting(exerciseTime: exerciseTime, restTime: restTime, howManySets: howManySets)
-        }
-        .font(.title)
-        .padding()
-        .border(Color.blue, width: 4.0)
-        .cornerRadius(10.0)
-      }
-      
-    } else {
-      TimerView(exerciseSetting: $exerciseSetting)
-    }
-  }
+
+        .navigationTitle("WorkoutTimer")
+      } //: NavigationView
+      .colorInvert()
+    } //: ZStack
+  } //: Body
 }
 
 struct labelView: View {
