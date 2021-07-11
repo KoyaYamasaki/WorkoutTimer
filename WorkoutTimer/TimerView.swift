@@ -9,14 +9,21 @@ import SwiftUI
 import AVFoundation
 
 struct TimerView: View {
-  @State private var percentage: Int = 0
+  @State private var startingCount = 3
+  @State private var isStarted = false
+
+  @State private var remainingCount: Int = 0
   @State private var isExercising = false
-  @State private var readyToStart = "START"
+  @State private var stateLabel = "START"
   @State private var setCount: Int = 0
+
+  @ObservedObject var countSound = AudioPlayer(name: "Count")
+  @ObservedObject var completionSound = AudioPlayer(name: "Completion")
+  @ObservedObject var finishSound = AudioPlayer(name: "Finish")
   
   let exerciseSetting: ExerciseSetting
-//  @State private var timer = Timer()
-
+  let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+  
   var body: some View {
     ZStack {
       Color.backgroundColor
@@ -27,57 +34,83 @@ struct TimerView: View {
         Text("Set count: \(setCount) / \(exerciseSetting.howManySets)")
           .font(.system(size: 25))
           .fontWeight(.heavy)
-          .colorInvert()
-        Text(readyToStart)
+          .foregroundColor(.white)
+        Text(stateLabel)
           .font(.system(size: 45))
           .fontWeight(.heavy)
-          .colorInvert()
+          .foregroundColor(.white)
+        
         
         Spacer()
         ZStack {
           Pulsation()
           Track()
-          Label(percentage: CGFloat(percentage))
-          OutLine(percentage: CGFloat(percentage), multipleBy: multipleValue())
+          Label(percentage: CGFloat(remainingCount))
+          OutLine(percentage: CGFloat(remainingCount), multipleBy: multipleValue())
         }
         Spacer()
-        //        HStack(spacing: 80) {
-        //          Button(action: {
-        //            start()
-        //          }) {
-        //            Image(systemName: "play.circle.fill").resizable()
-        //              .frame(width: 65, height: 65)
-        //              .aspectRatio(contentMode: .fit)
-        //              .foregroundColor(.white)
-        //          }
-        //
-//        Button(action: {
-//          timer.invalidate()
-//        }) {
-//          Image(systemName: "pause.circle.fill").resizable()
-//            .frame(width: 65, height: 65)
-//            .aspectRatio(contentMode: .fit)
-//            .foregroundColor(.white)
+//        HStack(spacing: 80) {
+//          Button(action: {
+//            timer.upstream.connect()
+//          }) {
+//            Image(systemName: "play.circle.fill").resizable()
+//              .frame(width: 65, height: 65)
+//              .aspectRatio(contentMode: .fit)
+//              .foregroundColor(.white)
+//          }
+//          
+//          Button(action: {
+//            timer.upstream.connect().cancel()
+//          }) {
+//            Image(systemName: "pause.circle.fill").resizable()
+//              .frame(width: 65, height: 65)
+//              .aspectRatio(contentMode: .fit)
+//              .foregroundColor(.white)
+//          }
 //        }
       }
     }
-    .onAppear(perform: {
-      var timer = Timer()
-      var count = 3
-      timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-//        timer.invalidate()
-        fireSoundEffect(count: count+1)
-        if count == 0 {
-          timer.invalidate()
-          setCount += 1
-          switchExerciseAndRest()
-          start()
-        } else {
-          readyToStart = "\(count)"
-          count -= 1
-        }
+    .onReceive(timer) { _ in
+      if !isStarted {
+        fireStartingCount()
+      } else {
+        workoutCountDown()
       }
+    }
+    .onDisappear(perform: {
+      timer.upstream.connect().cancel()
+      countSound.stop()
+      completionSound.stop()
+      finishSound.stop()
     })
+  }
+  
+  func fireStartingCount() {
+    fireSoundEffect(count: startingCount)
+    if startingCount > 0 {
+      stateLabel = "\(startingCount)"
+      startingCount -= 1
+    } else if startingCount == 0 {
+      setCount += 1
+      switchExerciseAndRest()
+      isStarted = true
+    }
+  }
+  
+  func workoutCountDown() {
+    remainingCount -= 1
+    if remainingCount == 0 {
+      if finishExerciseIfNeeded() {
+        return
+      }
+      
+      switchExerciseAndRest()
+      
+      if isExercising {
+        setCount += 1
+      }
+    }
+    fireSoundEffect(count: remainingCount)
   }
   
   func multipleValue() -> CGFloat {
@@ -89,61 +122,35 @@ struct TimerView: View {
     }
     return divideHundred * 0.01
   }
-
+  
   func switchExerciseAndRest() {
     isExercising.toggle()
-
+    
     if isExercising {
-      percentage = exerciseSetting.exerciseTime
-      readyToStart = "START"
+      remainingCount = exerciseSetting.exerciseTime
+      stateLabel = "START"
     } else {
-      percentage = exerciseSetting.restTime
-      readyToStart = "REST"
+      remainingCount = exerciseSetting.restTime
+      stateLabel = "REST"
     }
   }
-
+  
   func finishExerciseIfNeeded() -> Bool {
     if !isExercising && setCount == exerciseSetting.howManySets {
-      percentage = 0
-      readyToStart = "Finish!"
+      remainingCount = 0
+      stateLabel = "Finish!"
+      finishSound.play()
+      timer.upstream.connect().cancel()
       return true
     }
     return false
   }
-
-  func start() {
-    var timer = Timer()
-    timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) {
-      _ in
-      
-      fireSoundEffect(count: percentage)
-
-      if percentage == 1 {
-        timer.invalidate()
-
-        if finishExerciseIfNeeded() {
-          return
-        }
-
-        switchExerciseAndRest()
-
-        if isExercising {
-          setCount += 1
-        }
-
-        start()
-        return
-      }
-      
-      percentage -= 1
-    }
-  }
   
   func fireSoundEffect(count: Int) {
-    if count <= 4 && count != 1 {
-      AudioServicesPlaySystemSound(1052)
-    } else if count == 1 {
-      AudioServicesPlaySystemSound(1001)
+    if count <= 3 && count != 0 {
+      countSound.play()
+    } else if count == 0 {
+      completionSound.play()
     }
   }
 }
@@ -155,7 +162,7 @@ struct Label: View {
       Text(String(format: "%.0f", percentage))
         .font(.system(size: 65))
         .fontWeight(.heavy)
-        .colorInvert()
+        .foregroundColor(.white)
     }
   }
 }
@@ -217,6 +224,6 @@ struct Pulsation: View {
 struct CircularProgressView_Previews: PreviewProvider {
   static var previews: some View {
     let exercise: ExerciseSetting = ExerciseSetting(exerciseTime: 10, restTime: 5, howManySets: 2)
-      TimerView(exerciseSetting: exercise)
+    TimerView(exerciseSetting: exercise)
   }
 }

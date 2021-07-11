@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4629C5B8269AB61E009382BF /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4629C5B7269AB61E009382BF /* AudioPlayer.swift */; };
+		4629C5BC269AB915009382BF /* Finish.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 4629C5B9269AB915009382BF /* Finish.m4a */; };
+		4629C5BD269AB915009382BF /* Completion.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 4629C5BA269AB915009382BF /* Completion.m4a */; };
+		4629C5BE269AB915009382BF /* Count.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 4629C5BB269AB915009382BF /* Count.m4a */; };
 		4646E7D22696A0E200E2EB55 /* WorkoutTimerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4646E7D12696A0E200E2EB55 /* WorkoutTimerApp.swift */; };
 		4646E7D42696A0E200E2EB55 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4646E7D32696A0E200E2EB55 /* ContentView.swift */; };
 		4646E7D62696A0E300E2EB55 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4646E7D52696A0E300E2EB55 /* Assets.xcassets */; };
@@ -17,6 +21,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4629C5B7269AB61E009382BF /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
+		4629C5B9269AB915009382BF /* Finish.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = Finish.m4a; path = WorkoutTimer/Assets.xcassets/Finish.m4a; sourceTree = SOURCE_ROOT; };
+		4629C5BA269AB915009382BF /* Completion.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = Completion.m4a; path = WorkoutTimer/Assets.xcassets/Completion.m4a; sourceTree = SOURCE_ROOT; };
+		4629C5BB269AB915009382BF /* Count.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = Count.m4a; path = WorkoutTimer/Assets.xcassets/Count.m4a; sourceTree = SOURCE_ROOT; };
 		4646E7CE2696A0E200E2EB55 /* WorkoutTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WorkoutTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4646E7D12696A0E200E2EB55 /* WorkoutTimerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutTimerApp.swift; sourceTree = "<group>"; };
 		4646E7D32696A0E200E2EB55 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -59,6 +67,7 @@
 			isa = PBXGroup;
 			children = (
 				4646E7D12696A0E200E2EB55 /* WorkoutTimerApp.swift */,
+				4629C5B7269AB61E009382BF /* AudioPlayer.swift */,
 				4646E7D32696A0E200E2EB55 /* ContentView.swift */,
 				4646E7E22696AAD500E2EB55 /* SettingView.swift */,
 				4646E7E42696AD6600E2EB55 /* TimerView.swift */,
@@ -74,6 +83,9 @@
 			isa = PBXGroup;
 			children = (
 				4646E7D82696A0E300E2EB55 /* Preview Assets.xcassets */,
+				4629C5BA269AB915009382BF /* Completion.m4a */,
+				4629C5BB269AB915009382BF /* Count.m4a */,
+				4629C5B9269AB915009382BF /* Finish.m4a */,
 			);
 			path = "Preview Content";
 			sourceTree = "<group>";
@@ -135,7 +147,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4629C5BD269AB915009382BF /* Completion.m4a in Resources */,
+				4629C5BC269AB915009382BF /* Finish.m4a in Resources */,
 				4646E7D92696A0E300E2EB55 /* Preview Assets.xcassets in Resources */,
+				4629C5BE269AB915009382BF /* Count.m4a in Resources */,
 				4646E7D62696A0E300E2EB55 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -152,6 +167,7 @@
 				4646E7E12696A11400E2EB55 /* Extensions.swift in Sources */,
 				4646E7E52696AD6600E2EB55 /* TimerView.swift in Sources */,
 				4646E7D22696A0E200E2EB55 /* WorkoutTimerApp.swift in Sources */,
+				4629C5B8269AB61E009382BF /* AudioPlayer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -60,25 +60,22 @@ struct SettingView: View {
 
           NavigationLink(
             destination:
-              TimerView(
-                exerciseSetting:
+              TimerView(exerciseSetting:
                   ExerciseSetting(
                     exerciseTime: exerciseTime,
                     restTime: restTime,
                     howManySets: howManySets)),
           label: {
             Text("START")
+              .foregroundColor(.blue)
           })
-          .font(.title)
+          .font(.title2)
           .padding()
-          .border(Color.blue, width: 4.0)
-          .cornerRadius(10.0)
-
         }
 
         .navigationTitle("WorkoutTimer")
       } //: NavigationView
-      .colorInvert()
+//      .colorInvert()
     } //: ZStack
   } //: Body
 }
