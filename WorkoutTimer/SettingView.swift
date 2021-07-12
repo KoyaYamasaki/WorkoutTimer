@@ -7,16 +7,8 @@
 
 import SwiftUI
 
-struct ExerciseSetting {
-  var exerciseTime: Int
-  var restTime: Int
-  var howManySets: Int
-}
-
 struct SettingView: View {
-  @State private var exerciseTime: Int = 30
-  @State private var restTime: Int = 10
-  @State private var howManySets: Int = 5
+  @ObservedObject var exerciseSetting = ExerciseSetting()
   
   var body: some View {
     ZStack {
@@ -28,7 +20,7 @@ struct SettingView: View {
         Form {
 
           Section {
-            Picker(selection: $exerciseTime, label: labelView(title: "Exercise Time", subtitle: "\(exerciseTime) sec")) {
+            Picker(selection: $exerciseSetting.exerciseTime, label: labelView(title: "Exercise Time", subtitle: "\(exerciseSetting.exerciseTime) sec")) {
               ForEach(5...100, id: \.self) { index in
                 if index % 5 == 0 {
                   Text("\(index) sec")
@@ -39,7 +31,7 @@ struct SettingView: View {
           }
           
           Section {
-            Picker(selection: $restTime, label: labelView(title: "Rest Time", subtitle: "\(restTime) sec")) {
+            Picker(selection: $exerciseSetting.restTime, label: labelView(title: "Rest Time", subtitle: "\(exerciseSetting.restTime) sec")) {
               ForEach(5...30, id: \.self) { index in
                 if index % 5 == 0 {
                   Text("\(index) sec")
@@ -50,7 +42,7 @@ struct SettingView: View {
           }
           
           Section {
-            Picker(selection: $howManySets, label: labelView(title: "How many sets", subtitle: "\(howManySets) sets")) {
+            Picker(selection: $exerciseSetting.howManySets, label: labelView(title: "How many sets", subtitle: "\(exerciseSetting.howManySets) sets")) {
               ForEach(1...10, id: \.self) { index in
                 Text("\(index) set")
               }
@@ -60,11 +52,7 @@ struct SettingView: View {
 
           NavigationLink(
             destination:
-              TimerView(exerciseSetting:
-                  ExerciseSetting(
-                    exerciseTime: exerciseTime,
-                    restTime: restTime,
-                    howManySets: howManySets)),
+              TimerView(exerciseSetting: exerciseSetting),
           label: {
             Text("START")
               .foregroundColor(.blue)
@@ -95,6 +83,6 @@ struct labelView: View {
 }
 struct SettingView_Previews: PreviewProvider {
   static var previews: some View {
-    SettingView()
+    SettingView(exerciseSetting: ExerciseSetting())
   }
 }

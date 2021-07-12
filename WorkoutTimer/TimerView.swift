@@ -21,7 +21,7 @@ struct TimerView: View {
   @ObservedObject var completionSound = AudioPlayer(name: "Completion")
   @ObservedObject var finishSound = AudioPlayer(name: "Finish")
   
-  let exerciseSetting: ExerciseSetting
+  @ObservedObject var exerciseSetting: ExerciseSetting
   let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
   
   var body: some View {
@@ -223,7 +223,6 @@ struct Pulsation: View {
 
 struct CircularProgressView_Previews: PreviewProvider {
   static var previews: some View {
-    let exercise: ExerciseSetting = ExerciseSetting(exerciseTime: 10, restTime: 5, howManySets: 2)
-    TimerView(exerciseSetting: exercise)
+    TimerView(exerciseSetting: ExerciseSetting())
   }
 }
