@@ -17,9 +17,9 @@ struct TimerView: View {
   @State private var stateLabel = "START"
   @State private var setCount: Int = 0
 
-  @ObservedObject var countSound = AudioPlayer(name: "Count")
-  @ObservedObject var completionSound = AudioPlayer(name: "Completion")
-  @ObservedObject var finishSound = AudioPlayer(name: "Finish")
+  static let countSound = AudioPlayer(name: "Count")
+  static let completionSound = AudioPlayer(name: "Completion")
+  static let finishSound = AudioPlayer(name: "Finish")
   
   @ObservedObject var exerciseSetting: ExerciseSetting
   let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -79,9 +79,9 @@ struct TimerView: View {
     }
     .onDisappear(perform: {
       timer.upstream.connect().cancel()
-      countSound.stop()
-      completionSound.stop()
-      finishSound.stop()
+      Self.countSound.stop()
+      Self.completionSound.stop()
+      Self.finishSound.stop()
     })
   }
   
@@ -139,7 +139,7 @@ struct TimerView: View {
     if !isExercising && setCount == exerciseSetting.howManySets {
       remainingCount = 0
       stateLabel = "Finish!"
-      finishSound.play()
+      Self.finishSound.play()
       timer.upstream.connect().cancel()
       return true
     }
@@ -148,9 +148,9 @@ struct TimerView: View {
   
   func fireSoundEffect(count: Int) {
     if count <= 3 && count != 0 {
-      countSound.play()
+      Self.countSound.play()
     } else if count == 0 {
-      completionSound.play()
+      Self.completionSound.play()
     }
   }
 }

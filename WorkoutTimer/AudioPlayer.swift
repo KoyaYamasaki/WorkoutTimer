@@ -11,15 +11,17 @@ import AVFoundation
 class AudioPlayer: ObservableObject {
   var player = AVAudioPlayer()
   var session = AVAudioSession.sharedInstance()
-  
-  init(name: String, volume: Float = 1) {
+  let volume: Float = 0.8
+
+  init(name: String) {
     do {
-      try session.setCategory(.ambient)
+      // play in silent mode and other app playing in background.
+      try session.setCategory(.playback, options: [.duckOthers])
       try session.setActive(true)
     } catch {
       print("failed to initialize AVAudioSession")
     }
-    
+
     if let url = Bundle.main.url(forResource: name, withExtension:  "m4a") {
       print("success audio file : \(url)")
       do {
@@ -35,6 +37,7 @@ class AudioPlayer: ObservableObject {
   }
   
   func play() {
+    player.setVolume(volume, fadeDuration: 0)
     player.play()
   }
   
